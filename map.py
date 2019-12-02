@@ -33,7 +33,7 @@ class Map(object):
         self.playerLocation = (row, col)
         self.map[row][col] += '*'
         if self.playerLocation == (0,0):
-            print(f'Initial Agent at (0,0)')
+            print(f'Initial Agent at (1,1)')
         else:
             print(f'Agent move to {self.mapOut(self.playerLocation)}')
         return self.map[row][col][:-1]
