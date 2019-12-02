@@ -1,39 +1,84 @@
-# %%
-def ifAdjSafe(safe, back, statusM):
+import sys
+
+
+def ifAdjSafe(safe, back, statusM, brain):
     M = statusM
     if M == '*':
         adj = m.adjacent()
         for i in adj:
             if i not in back:
                 safe.append(i)
+                r, c = i
+                brain[r][c] = 'o'
 
 
 BREEZE = 'B'
-SMELL = 'S'
+STENCH = 'S'
+PIT = 'P'
+WUMPUS = 'W'
+POSSIBLEWUMPUS = 'W?'
+POSSIBLEPIT = 'P?'
+GOLD = 'G'
+allCell = []
+FoundWumpus = False
+for i in range(4):
+    for j in range(4):
+        allCell.append((i, j))
 
 
-def scanAll(brain, explored, m):
-    hazards = [BREEZE, SMELL]
-    for cell in explored:
+def scanAllB_S(brain, m):
+    global FoundWumpus
+    for cell in allCell:
         row, col = cell
         if BREEZE in brain[row][col]:
             possibleB = []
-            for c in m.adjacent((row, col)):
+            l = [cell for cell in m.adjacent((row, col)) if cell not in back]
+            for c in l:
                 row, col = c
-                if brain[row][col] == 'B?':
+                if POSSIBLEPIT in brain[row][col] or PIT in brain[row][col]:
                     possibleB.append(c)
             if len(possibleB) is 1:
                 r, c = possibleB[0]
                 brain[r][c] = 'P'
-        if SMELL in brain[row][col]:
+        if STENCH in brain[row][col]:
             possibleS = []
-            for c in m.adjacent((row, col)):
+            l = [cell for cell in m.adjacent((row, col)) if cell not in back]
+            for c in l:
                 row, col = c
-                if brain[row][col] == 'W?':
+                if POSSIBLEWUMPUS in brain[row][col] or WUMPUS in brain[row][col]:
                     possibleS.append(c)
             if len(possibleS) is 1:
                 r, c = possibleS[0]
                 brain[r][c] = 'W'
+                FoundWumpus = True
+                #print('Found wumpus')
+
+
+def scanAllP_W(brain, m):
+    for cell in allCell:
+        row, col = cell
+        if POSSIBLEWUMPUS in brain[row][col]:
+            possible = True
+            for adj in m.adjacent(cell):
+                r, c = adj
+                if brain[r][c] is not '?' and brain[r][c] is not 'o' and STENCH not in brain[r][c]:
+                    possible = False
+            if not possible:
+                brain[row][col] = brain[row][col].replace(POSSIBLEWUMPUS, '')
+                if brain[row][col] == '?':
+                    brain[row][col] = 'o'
+                    safe.append(cell)
+        if POSSIBLEPIT in brain[row][col]:
+            possible = True
+            for adj in m.adjacent(cell):
+                r, c = adj
+                if brain[r][c] is not '?' and brain[r][c] is not 'o' and BREEZE not in brain[r][c]:
+                    possible = False
+            if not possible:
+                brain[row][col] = brain[row][col].replace(POSSIBLEPIT, '')
+                if brain[row][col] == '?':
+                    brain[row][col] = 'o'
+                    safe.append(cell)
 
 
 def printBrain(brain):
@@ -54,22 +99,25 @@ for _ in range(4):
     brain.append(['?', '?', '?', '?'])
 brain[0][0] = ''
 
-ifAdjSafe(safe, back, m.status())
+ifAdjSafe(safe, back, m.status(), brain)
 
 
 def markHazard(brain, r, c):
+    global FoundWumpus
     if BREEZE in brain[r][c]:
         adjacentDanger = [cell for cell in m.adjacent(
             (r, c)) if cell not in back]
         for danger in adjacentDanger:
             r, c = danger
-            brain[r][c] = 'P?'
-    if SMELL in brain[r][c]:
+            if brain[r][c] is not 'o':
+                brain[r][c] += 'P?'
+    if STENCH in brain[r][c]:
         adjacentDanger = [cell for cell in m.adjacent(
             (r, c)) if cell not in back]
         for danger in adjacentDanger:
             r, c = danger
-            brain[r][c] = 'W?'
+            if brain[r][c] is not 'o' and not FoundWumpus:
+                brain[r][c] += 'W?'
 
 
 while safe:
@@ -79,13 +127,20 @@ while safe:
     r, c = m.whereAmI()
     brain[r][c] = m.status()
     markHazard(brain, r, c)
-    ifAdjSafe(safe, back, m.status())
-    scanAll(brain, back, m)
+    ifAdjSafe(safe, back, m.status(), brain)
+    scanAllB_S(brain, m)
+    scanAllP_W(brain, m)
+    scanAllB_S(brain, m)
+    scanAllP_W(brain, m)
+    scanAllB_S(brain, m)
+    scanAllP_W(brain, m)
     print('MAP:')
     print(m)
     print('BRAIN:')
     printBrain(brain)
     print(f'Agent at: {m.whereAmI()}')
-
+    if GOLD in m.status():
+        print('Gold found!! Win!!')
+        sys.exit(0)
 
 # %%

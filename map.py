@@ -2,9 +2,9 @@ class Map(object):
     def __init__(self, size=4):
         self.SIZE = size
         self.map = [['', '', 'W', ''],
-                    ['', '', 'P', ''],
-                    ['', 'P', '', ''],
-                    ['', '', '', 'P']]
+                    ['', '', '', ''],
+                    ['P', '', '', ''],
+                    ['', 'P', '', 'P']]
         self.neighbor_B_S()
         self.playerLocation = (0, 0)
         self.moveTo(self.playerLocation)
