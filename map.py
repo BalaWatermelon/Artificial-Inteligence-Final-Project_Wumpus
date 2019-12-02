@@ -7,7 +7,7 @@ class Map(object):
                     ['', '', '', 'P']]
         self.neighbor_B_S()
         self.playerLocation = (0, 0)
-        self.moveTo(self.mapOut(self.playerLocation))
+        self.moveTo(self.playerLocation)
 
     def __str__(self):
         r = ''
