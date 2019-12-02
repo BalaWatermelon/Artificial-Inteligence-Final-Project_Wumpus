@@ -52,7 +52,7 @@ class Map(object):
         return self.map[col][row]
 
     def whereAmI(self):
-        return self.mapOut(self.playerLocation)
+        return self.playerLocation
 
     def adjacent(self):
         x, y = self.playerLocation
