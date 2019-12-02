@@ -4,14 +4,14 @@ class Map(object):
         self.map = [['', '', 'W', ''],
                     ['', '', '', ''],
                     ['P', '', '', ''],
-                    ['', 'P', '', 'P']]
+                    ['', '', '', 'P']]
         self.neighbor_B_S()
         self.playerLocation = (0, 0)
         self.moveTo(self.playerLocation)
 
     def __str__(self):
         r = ''
-        for row in self.map[::]:
+        for row in self.map[::-1]:
             r += str(row)+'\n'
         return r
 
@@ -32,7 +32,10 @@ class Map(object):
         row, col = self.mapIn(location)
         self.playerLocation = (row, col)
         self.map[row][col] += '*'
-        print(f'Move player to {self.playerLocation}')
+        if self.playerLocation == (0,0):
+            print(f'Initial Agent at (0,0)')
+        else:
+            print(f'Agent move to {self.mapOut(self.playerLocation)}')
         return self.map[row][col][:-1]
 
     def mapIn(self, location):

@@ -1,5 +1,16 @@
 import sys
 
+BREEZE = 'B'
+STENCH = 'S'
+PIT = 'P'
+WUMPUS = 'W'
+POSSIBLEWUMPUS = 'W?'
+POSSIBLEPIT = 'P?'
+GOLD = 'G'
+allCell = []
+FoundWumpus = False
+EXITGOLD = False
+
 
 def ifAdjSafe(safe, back, statusM, brain):
     M = statusM
@@ -12,15 +23,6 @@ def ifAdjSafe(safe, back, statusM, brain):
                 brain[r][c] = 'o'
 
 
-BREEZE = 'B'
-STENCH = 'S'
-PIT = 'P'
-WUMPUS = 'W'
-POSSIBLEWUMPUS = 'W?'
-POSSIBLEPIT = 'P?'
-GOLD = 'G'
-allCell = []
-FoundWumpus = False
 for i in range(4):
     for j in range(4):
         allCell.append((i, j))
@@ -83,7 +85,7 @@ def scanAllP_W(brain, m):
 
 def printBrain(brain):
     r = ''
-    for b in brain:
+    for b in brain[::-1]:
         r += str(b)+'\n'
     print(r)
 
@@ -91,6 +93,8 @@ def printBrain(brain):
 # %%
 import map
 m = map.Map()
+print('MAP')
+print(m)
 safe = []
 back = []
 
@@ -121,6 +125,7 @@ def markHazard(brain, r, c):
 
 
 while safe:
+    input()
     nextstep = safe.pop()
     back.append(m.whereAmI())
     m.moveTo(nextstep)
@@ -138,8 +143,9 @@ while safe:
     print(m)
     print('BRAIN:')
     printBrain(brain)
-    print(f'Agent at: {m.whereAmI()}')
-    if GOLD in m.status():
+    x, y = m.whereAmI()
+    print(f'Agent at: {(x+1,y+1)}')
+    if GOLD in m.status() and EXITGOLD:
         print('Gold found!! Win!!')
         sys.exit(0)
 
