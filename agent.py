@@ -1,10 +1,11 @@
 #%%
-def ifAdjSafe(safe,statusM):
+def ifAdjSafe(safe,back,statusM):
     M=statusM
     if M=='*':
         adj=m.adjacent()
         for i in adj:
-            safe.append(i)
+            if i not in back:
+                safe.append(i)
 
     
     
@@ -12,13 +13,15 @@ def ifAdjSafe(safe,statusM):
 import map
 m=map.Map()
 safe=[]
+back=[]
 
-ifAdjSafe(safe,m.status())
+ifAdjSafe(safe,back,m.status())
 
 while safe:
     nextstep=safe.pop()
+    back.append(m.whereAmI())
     m.moveTo(nextstep)
-    ifAdjSafe(safe,m.status())
+    ifAdjSafe(safe,back,m.status())
     print(m.whereAmI())
     
 
