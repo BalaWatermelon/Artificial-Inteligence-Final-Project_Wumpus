@@ -56,9 +56,9 @@ class Map(object):
 
     def adjacent(self, location=None):
         if location:
-            x, y = self.playerLocation
-        else:
             x, y = location
+        else:
+            x, y = self.playerLocation
         adj = [(x-1, y), (x+1, y), (x, y+1), (x, y-1)]
         out = [cell for cell in adj if cell[0] < self.SIZE and cell[1] <
                self.SIZE and cell[0] >= 0 and cell[1] >= 0]
