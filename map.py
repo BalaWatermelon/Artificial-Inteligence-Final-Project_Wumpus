@@ -11,7 +11,7 @@ class Map(object):
 
     def __str__(self):
         r = ''
-        for row in self.map[::-1]:
+        for row in self.map[::]:
             r += str(row)+'\n'
         return r
 
@@ -27,29 +27,29 @@ class Map(object):
         - ''  :   Nothing
         - 'G' :   Glare
         '''
-        col, row = self.playerLocation
+        row, col = self.playerLocation
         self.map[row][col] = self.map[row][col].strip('*')
-        col, row = self.mapIn(location)
-        self.playerLocation = (col, row)
+        row, col = self.mapIn(location)
+        self.playerLocation = (row, col)
         self.map[row][col] += '*'
-        print(f'Move player to {self.mapOut(self.playerLocation)}')
+        print(f'Move player to {self.playerLocation}')
         return self.map[row][col][:-1]
 
     def mapIn(self, location):
-        col, row = location
+        row, col = location
         if row >= self.SIZE or col >= self.SIZE or row < 0 or col < 0:
             raise ValueError(
-                f'Access map location out of border at {col, row}')
+                f'Access map location out of border at {row, col}')
         else:
-            return (col, row)
+            return (row, col)
 
     def mapOut(self, location):
         x, y = location
         return (x+1, y+1)
 
     def status(self):
-        col, row = self.playerLocation
-        return self.map[col][row]
+        row, col = self.playerLocation
+        return self.map[row][col]
 
     def whereAmI(self):
         return self.playerLocation
@@ -97,4 +97,3 @@ class Map(object):
                         if nei == 'S' and gold == None and 'P' not in world[i][right]:
                             world[i][right] += 'G'
                             gold = 1
-
